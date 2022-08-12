@@ -1,0 +1,79 @@
+[
+  {
+    "id": "1",
+    "title": "Titre de l'évènement 1",
+    "owner": {
+      "name": "Arnaud",
+      "avatar": "http://butterfly-entertainment.com/magnitude/web_v3/wp-content/uploads/2021/03/photoMais.jpeg",
+      "color": "#FFE5F8"
+    },
+    "startDate": "2022-01-29T06:00:00Z",
+    "endDate": "2022-02-02T16:00:00Z"
+  },
+  {
+    "id": "2",
+    "title": "Titre de l'évènement 2",
+    "owner": {
+      "name": "Arnaud",
+      "avatar": "http://butterfly-entertainment.com/magnitude/web_v3/wp-content/uploads/2021/03/photoMais.jpeg",
+      "color": "#FFE5F8"
+    },
+    "startDate": "2022-02-04T06:00:00Z",
+    "endDate": "2022-02-05T16:00:00Z"
+  },
+  {
+    "id": "3",
+    "title": "Titre de l'évènement 3",
+    "owner": {
+      "name": "Alban",
+      "avatar": "http://butterfly-entertainment.com/magnitude/web_v3/wp-content/uploads/2021/04/unnamed-450x600.jpeg",
+      "color": "#E3EFF4"
+    },
+    "startDate": "2022-02-04T06:00:00Z",
+    "endDate": "2022-02-09T16:00:00Z"
+  },
+  {
+    "id": "4",
+    "title": "Titre de l'évènement 4",
+    "owner": {
+      "name": "Arnaud",
+      "avatar": "http://butterfly-entertainment.com/magnitude/web_v3/wp-content/uploads/2021/03/photoMais.jpeg",
+      "color": "#FFE5F8"
+    },
+    "startDate": "2022-02-07T06:00:00Z",
+    "endDate": "2022-02-11T16:00:00Z"
+  },
+  {
+    "id": "5",
+    "title": "Titre de l'évènement 5",
+    "owner": {
+      "name": "Alban",
+      "avatar": "http://butterfly-entertainment.com/magnitude/web_v3/wp-content/uploads/2021/04/unnamed-450x600.jpeg",
+      "color": "#E3EFF4"
+    },
+    "startDate": "2022-02-20T06:00:00Z",
+    "endDate": "2022-02-22T16:00:00Z"
+  },
+  {
+    "id": "6",
+    "title": "Titre de l'évènement 6",
+    "owner": {
+      "name": "Arnaud",
+      "avatar": "http://butterfly-entertainment.com/magnitude/web_v3/wp-content/uploads/2021/03/photoMais.jpeg",
+      "color": "#FFE5F8"
+    },
+    "startDate": "2022-02-20T06:00:00Z",
+    "endDate": "2022-02-23T16:00:00Z"
+  },
+  {
+    "id": "7",
+    "title": "Titre de l'évènement 7",
+    "owner": {
+      "name": "Arnaud",
+      "avatar": "http://butterfly-entertainment.com/magnitude/web_v3/wp-content/uploads/2021/03/photoMais.jpeg",
+      "color": "#FFE5F8"
+    },
+    "startDate": "2022-02-20T06:00:00Z",
+    "endDate": "2022-02-25T16:00:00Z"
+  }
+]

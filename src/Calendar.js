@@ -1,131 +1,95 @@
-import React from "react";
+import React, { useEffect } from "react";
+import dayjs from "dayjs";
+import { useState } from "react";
+import * as utils from "./utils/utils";
+import localeFr from "dayjs/locale/fr";
+import data from "./data/exercice-calendar.json";
+
+function calculateCalendar(m, y) {
+  let currentMonthDays = utils.createDaysForCurrentMonth(y, m);
+  let previousMonthDays = utils.createDaysForPreviousMonth(y, m, currentMonthDays);
+  let nextMonthDays = utils.createDaysForNextMonth(y, m, currentMonthDays);
+  let days = [...previousMonthDays, ...currentMonthDays, ...nextMonthDays];
+
+  return(days);
+}
 
 function Calendar() {
+  const [currentMonthName, setCurrentMonthName] = useState(null);
+  const [currentYear, setCurrentYear] = useState(null);
+  const [currentDate, setCurrentDate] = useState(dayjs());
+  const [calendar, setCalendar] = useState(null);
+
+  const WEEKDAYS = ["Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam.", "Dim."];
+
+  useEffect(() => {
+    setCurrentMonthName(utils.setFirstCharUppercase(dayjs(currentDate).locale(localeFr).format("MMMM")))
+    setCurrentYear(dayjs(currentDate).format("YYYY"));
+    setCalendar(calculateCalendar(currentDate.format("M"), currentDate.format("YYYY")));
+  
+    return () => {
+      console.log("component destroyed !");
+    }
+  }, [currentDate])
+  
+  function recalculateCalendar(date, operator) {
+    if(operator === "left") 
+      date = dayjs(date).subtract(1, "month");
+    if(operator === "right")
+      date = dayjs(date).add(1, "month");
+
+    setCurrentDate(date);
+  };
+
+
   return (
     <>
       <h1>Calendrier</h1>
       <div className="calendar-month">
         <section className="calendar-month-header">
           <span
+            onClick={() => recalculateCalendar(currentDate, "left")}
             className="calendar-month-header-selectors"
             id="previous-month-selector"
-          >{"<"}
+          >
+            {"<"}
           </span>
-          <div id="selected-month" className="calendar-month-header-selected-month">
-            February 2020
+          <div
+            id="selected-month"
+            className="calendar-month-header-selected-month"
+          >
+            {currentMonthName} {currentYear}
           </div>
           <span
+            onClick={() => recalculateCalendar(currentDate, "right")}
             className="calendar-month-header-selectors"
             id="next-month-selector"
           >
             {">"}
           </span>
-
-          {/* <div className="calendar-month-header-selectors">
-      <span id="previous-month-selector">{'<'}</span>
-      <span id="present-month-selector">Today</span>
-      <span id="next-month-selector">{'>'}</span>
-    </div> */}
         </section>
 
         <ol id="days-of-week" className="day-of-week">
-          <li>Lun.</li>
-          <li>Mar.</li>
-          <li>Mer.</li>
-          <li>Jeu.</li>
-          <li>Ven.</li>
-          <li>Sam.</li>
-          <li>Dim.</li>
+          {WEEKDAYS.map((day, index) => (
+            <li
+              key={day}
+            >
+              {day}
+            </li>
+          ))}
         </ol>
 
         <ol id="calendar-days" className="days-grid">
-          <li className="calendar-day">
-            <span>1</span>
+
+        {calendar && calendar.map((day, idx) => (
+          <li
+            key={idx}
+            className={"calendar-day " +
+            //  `${utils.isWeekendDay(day.dateString) ? "" : ""}` + 
+             `${day.isCurrentMonth ? "calendar-day--current" : "calendar-day--not-current"}`}
+          ><span>{day.dayOfMonth}</span>
           </li>
-          <li className="calendar-day">
-            <span>2</span>
-          </li>
-          <li className="calendar-day">
-            <span>3</span>
-          </li>
-          <li className="calendar-day">
-            <span>4</span>
-          </li>
-          <li className="calendar-day">
-            <span>5</span>
-          </li>
-          <li className="calendar-day">
-            <span>6</span>
-          </li>
-          <li className="calendar-day">
-            <span>7</span>
-          </li>
-          <li className="calendar-day">
-            <span>8</span>
-          </li>
-          <li className="calendar-day">
-            <span>9</span>
-          </li>
-          <li className="calendar-day">
-            <span>10</span>
-          </li>
-          <li className="calendar-day">
-            <span>11</span>
-          </li>
-          <li className="calendar-day">
-            <span>12</span>
-          </li>
-          <li className="calendar-day">
-            <span>13</span>
-          </li>
-          <li className="calendar-day">
-            <span>14</span>
-          </li>
-          <li className="calendar-day">
-            <span>15</span>
-          </li>
-          <li className="calendar-day">
-            <span>16</span>
-          </li>
-          <li className="calendar-day">
-            <span>17</span>
-          </li>
-          <li className="calendar-day">
-            <span>18</span>
-          </li>
-          <li className="calendar-day">
-            <span>19</span>
-          </li>
-          <li className="calendar-day">
-            <span>20</span>
-          </li>
-          <li className="calendar-day">
-            <span>21</span>
-          </li>
-          <li className="calendar-day">
-            <span>22</span>
-          </li>
-          <li className="calendar-day">
-            <span>23</span>
-          </li>
-          <li className="calendar-day">
-            <span>24</span>
-          </li>
-          <li className="calendar-day">
-            <span>25</span>
-          </li>
-          <li className="calendar-day">
-            <span>26</span>
-          </li>
-          <li className="calendar-day">
-            <span>27</span>
-          </li>
-          <li className="calendar-day">
-            <span>28</span>
-          </li>
-          <li className="calendar-day">
-            <span>29</span>
-          </li>
+        ))}
         </ol>
       </div>
     </>
