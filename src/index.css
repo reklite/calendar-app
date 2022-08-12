@@ -131,3 +131,7 @@ li {
   /* background-color: var(--grey-100); */
   color: var(--grey-300);
 }
+
+.colorize {
+  background-color: #FFE5F8;
+}

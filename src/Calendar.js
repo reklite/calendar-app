@@ -7,17 +7,20 @@ import data from "./data/exercice-calendar.json";
 
 function calculateCalendar(m, y) {
   let currentMonthDays = utils.createDaysForCurrentMonth(y, m);
-  let previousMonthDays = utils.createDaysForPreviousMonth(y, m, currentMonthDays);
+  let previousMonthDays = utils.createDaysForPreviousMonth(
+    y,
+    m,
+    currentMonthDays
+  );
   let nextMonthDays = utils.createDaysForNextMonth(y, m, currentMonthDays);
-  let days = [...previousMonthDays, ...currentMonthDays, ...nextMonthDays];
-
-  return(days);
+  let calendar = [...previousMonthDays, ...currentMonthDays, ...nextMonthDays];
+  return calendar;
 }
 
-function Calendar() {
+function Calendar({ givenDate }) {
+  const [currentDate, setCurrentDate] = useState(givenDate);
   const [currentMonthName, setCurrentMonthName] = useState(null);
   const [currentYear, setCurrentYear] = useState(null);
-  const [currentDate, setCurrentDate] = useState(dayjs());
   const [calendar, setCalendar] = useState(null);
 
   const [dataEvents, setDataEvents] = useState(data);
@@ -25,37 +28,49 @@ function Calendar() {
   const WEEKDAYS = ["Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam.", "Dim."];
 
   useEffect(() => {
-    setCurrentMonthName(utils.setFirstCharUppercase(dayjs(currentDate).locale(localeFr).format("MMMM")))
+    setDataEvents(formatData(dataEvents));
+    setCurrentMonthName(
+      utils.setFirstCharUppercase(
+        dayjs(currentDate).locale(localeFr).format("MMMM")
+      )
+    );
     setCurrentYear(dayjs(currentDate).format("YYYY"));
-    setCalendar(calculateCalendar(currentDate.format("M"), currentDate.format("YYYY")));
-  
+    setCalendar(
+      calculateCalendar(
+        currentDate.format("M"),
+        currentDate.format("YYYY"),
+      )
+    );
+
+    return () => {
+      console.log("component destroyed !");
+    };
+  }, [currentDate]);
+
+  // dataEvents doesn't change so we don't need it now
+  /*useEffect(() => {
     setDataEvents(formatData(dataEvents));
 
     return () => {
       console.log("component destroyed !");
-    }
-  }, [currentDate])
-  
+    };
+  }, [dataEvents]);*/
+
   function recalculateCalendar(date, operator) {
-    if(operator === "left") 
-      date = dayjs(date).subtract(1, "month");
-    if(operator === "right")
-      date = dayjs(date).add(1, "month");
+    if (operator === "left") date = dayjs(date).subtract(1, "month");
+    if (operator === "right") date = dayjs(date).add(1, "month");
 
     setCurrentDate(date);
-  };
+  }
 
   function formatData(data) {
-    data.forEach(element => {
+    data.forEach((element) => {
       element.startDate = dayjs(element.startDate).format("YYYY-MM-DD");
       element.endDate = dayjs(element.endDate).format("YYYY-MM-DD");
     });
 
     return data;
   }
-
-  // console.log(dayjs(dataEvents[0].startDate).format("YYYY-MM-DD"));
-
 
   return (
     <>
@@ -86,25 +101,33 @@ function Calendar() {
 
         <ol id="days-of-week" className="day-of-week">
           {WEEKDAYS.map((day, index) => (
-            <li
-              key={day}
-            >
-              {day}
-            </li>
+            <li key={day}>{day}</li>
           ))}
         </ol>
 
         <ol id="calendar-days" className="days-grid">
-
-        {calendar && calendar.map((day) => (
-          <li
-            key={day.date}
-            className={"calendar-day " +
-            //  `${utils.isWeekendDay(day.dateString) ? "" : ""}` + 
-             `${day.isCurrentMonth ? "calendar-day--current" : "calendar-day--not-current"}`}
-          ><span>{day.dayOfMonth}</span>
-          </li>
-        ))}
+          {calendar &&
+            calendar.map((day) => (
+              <li
+                key={day.date}
+                className={
+                  "calendar-day " +
+                  `${
+                    utils.isBetweenDates(day.date, dataEvents)
+                      ? "colorize "
+                      : ""
+                  }` +
+                  `${
+                    day.isCurrentMonth
+                      ? "calendar-day--current"
+                      : "calendar-day--not-current"
+                  }`
+                }
+              >
+                {utils.isBetweenDates(day.date, dataEvents) ? "" : ""}
+                <span>{day.dayOfMonth}</span>
+              </li>
+            ))}
         </ol>
       </div>
     </>
