@@ -1,10 +1,16 @@
 import './App.css';
 import Calendar from './Calendar';
+import dayjs from "dayjs";
 
 function App() {
+
+  const currentDate = dayjs();
+  const d = new Date(2022, 1, 15);
+  let givenDate = dayjs(d);
+
   return (
     <div className="App">
-      <Calendar />
+      <Calendar givenDate={givenDate}/>
     </div>
   );
 }
