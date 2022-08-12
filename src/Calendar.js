@@ -20,6 +20,8 @@ function Calendar() {
   const [currentDate, setCurrentDate] = useState(dayjs());
   const [calendar, setCalendar] = useState(null);
 
+  const [dataEvents, setDataEvents] = useState(data);
+
   const WEEKDAYS = ["Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam.", "Dim."];
 
   useEffect(() => {
@@ -27,6 +29,8 @@ function Calendar() {
     setCurrentYear(dayjs(currentDate).format("YYYY"));
     setCalendar(calculateCalendar(currentDate.format("M"), currentDate.format("YYYY")));
   
+    setDataEvents(formatData(dataEvents));
+
     return () => {
       console.log("component destroyed !");
     }
@@ -40,6 +44,17 @@ function Calendar() {
 
     setCurrentDate(date);
   };
+
+  function formatData(data) {
+    data.forEach(element => {
+      element.startDate = dayjs(element.startDate).format("YYYY-MM-DD");
+      element.endDate = dayjs(element.endDate).format("YYYY-MM-DD");
+    });
+
+    return data;
+  }
+
+  // console.log(dayjs(dataEvents[0].startDate).format("YYYY-MM-DD"));
 
 
   return (
@@ -81,9 +96,9 @@ function Calendar() {
 
         <ol id="calendar-days" className="days-grid">
 
-        {calendar && calendar.map((day, idx) => (
+        {calendar && calendar.map((day) => (
           <li
-            key={idx}
+            key={day.date}
             className={"calendar-day " +
             //  `${utils.isWeekendDay(day.dateString) ? "" : ""}` + 
              `${day.isCurrentMonth ? "calendar-day--current" : "calendar-day--not-current"}`}
