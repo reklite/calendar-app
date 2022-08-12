@@ -2,10 +2,12 @@ import dayjs from "dayjs";
 import localeFr from "dayjs/locale/fr";
 import weekday from "../../node_modules/dayjs/plugin/weekday";
 import weekOfYear from "../../node_modules/dayjs/plugin/weekOfYear";
+import isBetween from "../../node_modules/dayjs/plugin/isBetween";
 
 
 dayjs.extend(weekday);
 dayjs.extend(weekOfYear);
+dayjs.extend(isBetween);
 
 function getWeekday(date) {
     return dayjs(date).weekday();
@@ -89,4 +91,13 @@ export function createDaysForPreviousMonth(year, month, currentMonthDays) {
 
   export function isWeekendDay(dateString) {
     return [6, 0].includes(getWeekday(dateString));
+  }
+
+  export function isBetweenDates(d1, d2) {
+    let res = false;
+    for(const e of d2) {
+      res = dayjs(d1).isBetween(e.startDate, e.endDate, null, '[]');
+      if(res === true) return res;
+    }
+    return res;
   }
