@@ -1,5 +1,5 @@
 import './App.css';
-import Calendar from './Calendar';
+import Calendar from './components/Calendar';
 import dayjs from "dayjs";
 
 function App() {
