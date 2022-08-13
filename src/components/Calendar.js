@@ -10,14 +10,19 @@ const WEEKDAYS = ["Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam.", "Dim."];
 
 const Calendar = ({ givenDate }) => {
   const [date, setDate] = useState(givenDate);
-  const [monthYear, setMonthYear] = useState({currMonthName: null, currYear: null,});
-  
+  const [monthYear, setMonthYear] = useState({
+    currMonthName: null,
+    currYear: null,
+  });
+
   const [calendar, setCalendar] = useState(null);
   const [dataEvents, setDataEvents] = useState(data);
 
+  const [users, setUsers] = useState(null);
+
   useEffect(() => {
     setCalendar(calculateCalendar(date.format("M"), date.format("YYYY")));
-    setMonthYear(() => updateMonthYear(date));
+    setMonthYear(updateMonthYear(date));
 
     return () => {
       console.log("component destroyed !");
@@ -26,7 +31,9 @@ const Calendar = ({ givenDate }) => {
 
   // if dataEvents changes
   useEffect(() => {
-    setDataEvents(formatEvents(dataEvents));
+    const { events, arrUsers } = formatEventsUsers(dataEvents);
+    setDataEvents(events);
+    setUsers(arrUsers);
 
     return () => {
       console.log("component destroyed !");
@@ -61,28 +68,29 @@ const Calendar = ({ givenDate }) => {
   const changeDate = (date, operator) => {
     if (operator === "left") date = dayjs(date).subtract(1, "month");
     if (operator === "right") date = dayjs(date).add(1, "month");
-
     setDate(date);
   };
 
-  const formatEvents = (data) => {
-    data.forEach((element) => {
-      element.startDate = dayjs(element.startDate).format("YYYY-MM-DD");
-      element.endDate = dayjs(element.endDate).format("YYYY-MM-DD");
+  const formatEventsUsers = (data) => {
+    const users = [];
+    const events = data;
+    events.forEach((e) => {
+      e.startDate = dayjs(e.startDate).format("YYYY-MM-DD");
+      e.endDate = dayjs(e.endDate).format("YYYY-MM-DD");
+
+      // push user in array if no exist
+      if (users.findIndex((x) => x.color === e.owner.color))
+        users.push(e.owner);
     });
 
-    return data;
+    return { events: events, arrUsers: users };
   };
 
   return (
     <>
       <h1>Calendrier</h1>
       <div className="calendar-month">
-        <CalendarHeader
-          {...monthYear}
-          date={date}
-          changeDate={changeDate}
-        />
+        <CalendarHeader {...monthYear} date={date} changeDate={changeDate} />
 
         <ol id="days-of-week" className="day-of-week">
           {WEEKDAYS.map((day) => (
@@ -94,7 +102,6 @@ const Calendar = ({ givenDate }) => {
           {calendar &&
             calendar.map((day) => (
               <>
-                {/* <div>ok</div> */}
                 <li
                   key={day.date}
                   className={
