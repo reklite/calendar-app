@@ -1,5 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
 
+* { 
+    -moz-box-sizing: border-box; 
+    -webkit-box-sizing: border-box; 
+     box-sizing: border-box; 
+}
+
 body {
   font-family: "Montserrat", sans-serif;
   font-weight: 100;
@@ -19,11 +25,14 @@ li {
 }
 
 .calendar-month {
-  position: relative;
-  background-color: var(--grey-200);
-  border: solid 1px var(--grey-200);
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  /* text-align: center; */
+  max-width: 80%;
+  /* background-color: var(--grey-200); */
 }
 
 .calendar-month-header {
@@ -31,7 +40,9 @@ li {
   justify-content: center;
   align-items: center;
   background-color: #fff;
-  padding: 20px;
+  margin: 30px 0 30px 0;
+  /* margin: 35px; */
+  /* padding: 20px; */
   border-radius: inherit;
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
@@ -65,11 +76,11 @@ li {
   cursor: pointer;
 }
 
-.day-of-week {
+/* .day-of-week {
   color: var(--grey-800);
   font-size: 18px;
   background-color: #fff;
-}
+} */
 
 .day-of-week,
 .days-grid {
@@ -77,11 +88,22 @@ li {
   grid-template-columns: repeat(7, 1fr);
 }
 
+.day-of-week > li:first-child {
+  border-left: solid 1px var(--grey-200);
+  border-top-left-radius: 20px;
+  /* border-top-right-radius: 20px; */
+}
+
+.day-of-week > li:last-child {
+  border-top-right-radius: 20px;
+  /* border-top-right-radius: 20px; */
+}
+
 .day-of-week > * {
   text-align: right;
-  padding-right: 10px;
-  padding-top: 10px;
-  min-height: 70px;
+  padding-right: 20px;
+  padding-top: 15px;
+  min-height: 90px;
   font-size: 18px;
   background-color: #fff;
   color: var(--grey-800);
@@ -95,7 +117,8 @@ li {
   position: relative;
   grid-column-gap: var(--grid-gap);
   grid-row-gap: var(--grid-gap);
-  border-top: solid 1px var(--grey-200);
+  border: solid 1px var(--grey-200);
+  background-color: var(--grey-200);
 }
 
 .calendar-day {
@@ -107,14 +130,14 @@ li {
 }
 
 .calendar-day > span {
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
   position: absolute;
-  right: 2px;
-  padding-right: 10px;
-  padding-top: 5px;
-  width: var(--day-label-size);
+  right: 0px;
+  padding-right: 20px;
+  padding-top: 10px;
+  /* width: var(--day-label-size); */
   height: var(--day-label-size);
 }
 
