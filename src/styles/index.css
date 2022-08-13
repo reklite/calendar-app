@@ -31,7 +31,7 @@ li {
   justify-content: center;
   align-items: center;
   background-color: #fff;
-  padding: 10px;
+  padding: 20px;
   border-radius: inherit;
   -webkit-user-select: none; /* Safari */
   -moz-user-select: none; /* Firefox */
@@ -69,8 +69,6 @@ li {
   color: var(--grey-800);
   font-size: 18px;
   background-color: #fff;
-  padding-bottom: 5px;
-  padding-top: 10px;
 }
 
 .day-of-week,
