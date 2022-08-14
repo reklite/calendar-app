@@ -93,11 +93,29 @@ export function createDaysForPreviousMonth(year, month, currentMonthDays) {
     return [6, 0].includes(getWeekday(dateString));
   }
 
+  // export function isBetweenDates(d1, d2) {
+  //   let res = false;
+  //   for(const e of d2) {
+  //     res = dayjs(d1).isBetween(e.startDate, e.endDate, null, '[]');
+  //     if(res === true) return res;
+  //   }
+  //   return res;
+  // }
+
   export function isBetweenDates(d1, d2) {
-    let res = false;
+    let res = true;
+    let obj = [];
     for(const e of d2) {
-      res = dayjs(d1).isBetween(e.startDate, e.endDate, null, '[]');
-      if(res === true) return res;
+      if(!(dayjs(d1).isBetween(e.startDate, e.endDate, null, '[]')))
+        res = false;
+      else if (d1 === e.startDate) {
+        obj.push({ info: "start" , event: e });
+      }
+      else if (d1 === e.endDate)
+        obj.push({ info: "end" , event: e });
+      else
+        obj.push({ info: "active" , event: e });
     }
-    return res;
+
+    return obj.length !== 0 ? obj : false;
   }
