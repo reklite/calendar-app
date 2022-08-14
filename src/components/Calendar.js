@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import dayjs from "dayjs";
-import { useState } from "react";
 import * as utils from "../utils/utils";
 import localeFr from "dayjs/locale/fr";
 import data from "../data/files/exercice-calendar.json";
@@ -8,8 +7,8 @@ import CalendarHeader from "./CalendarHeader";
 
 const WEEKDAYS = ["Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam.", "Dim."];
 
-let pic1 = require("../data/photos/arnaud.jpeg");
-let pic2 = require("../data/photos/alban.jpeg");
+let picArnaud = require("../data/photos/arnaud.jpeg");
+let picAlban = require("../data/photos/alban.jpeg");
 
 const Calendar = ({ givenDate }) => {
   const [date, setDate] = useState(givenDate);
@@ -22,6 +21,11 @@ const Calendar = ({ givenDate }) => {
   const [dataEvents, setDataEvents] = useState(data);
 
   const [users, setUsers] = useState(null);
+
+  let rowCount = 1;
+  let idRow = [];
+
+  // const [rowCount, setRowCount] = useState(1);
 
   useEffect(() => {
     setCalendar(calculateCalendar(date.format("M"), date.format("YYYY")));
@@ -42,6 +46,28 @@ const Calendar = ({ givenDate }) => {
       console.log("component destroyed !");
     };
   }, [dataEvents]);
+
+  const pushIdRow = (obj) => {
+    idRow.push(obj);
+  };
+
+  const removeIdRow = (id) => {
+    let filtered = idRow;
+    filtered.filter((e) => e.id !== id);
+    idRow = filtered;
+  };
+
+  const addRowCount = () => {
+    rowCount++;
+  };
+
+  const minusRowCount = () => {
+    if (rowCount > 1) rowCount--;
+  };
+
+  const getIdRow = (id) => {
+    return idRow.find((e) => e.id === id);
+  };
 
   const calculateCalendar = (m, y) => {
     let currentMonthDays = utils.createDaysForCurrentMonth(y, m);
@@ -89,41 +115,53 @@ const Calendar = ({ givenDate }) => {
     return { events: events, arrUsers: arrUsers };
   };
 
-  const checkIfEvent = (date) => {
-    let eventObj;
-    let res;
-    // console.log("ici : " + JSON.stringify(dataEvents));
+  const getEventStyle = (evt) => {
+    let res = [];
 
-    let found = dataEvents.find((obj) => {
-      if (obj.startDate === date) {
-        eventObj = obj;
-        res = "start";
-        console.log(
-          `eventstart = ${JSON.stringify(obj.startDate)} = ${JSON.stringify(
-            date
-          )} = date`
-        );
-        console.log("obj = " + JSON.stringify(eventObj));
-      }
-      return obj.startDate === date;
-    });
-
-    if (found) {
-      const photo = (eventObj.owner.photo =
-        eventObj.owner.name === "Arnaud" ? pic1 : pic2);
-      const eventName = eventObj.title;
+    for (const e of evt) {
       const style = {
-        backgroundColor: eventObj.owner.color,
+        backgroundColor: e.event.owner.color,
       };
-      return { evt: eventName, photo: photo, style: style };
-    } else {
-      return { evt: false, photo: false, style: false };
+      if (e.info === "start") {
+        let row = rowCount;
+        let obj = { id: e.event.id, row: rowCount };
+        pushIdRow(obj);
+        addRowCount();
+
+        if (e.event.owner.name === "Arnaud") e.event.owner.avatar = picArnaud;
+        else e.event.owner.avatar = picAlban;
+
+        res.push({ row: row, evt: e.event, style: style, cname: "start" });
+      } else if (e.info === "active") {
+        let obj = getIdRow(e.event.id);
+        let row;
+        if (obj === undefined) {
+          let obj = { id: e.event.id, row: rowCount };
+          row = obj.row;
+          pushIdRow(obj);
+          addRowCount();
+        } else {
+          row = obj.row;
+        }
+
+        if (e.event.owner.name === "Arnaud") e.event.owner.avatar = picArnaud;
+        else e.event.owner.avatar = picAlban;
+
+        res.push({ row: row, evt: e.event, style: style, cname: "active" });
+      } else {
+        let obj = getIdRow(e.event.id);
+        let row = obj.row;
+        removeIdRow();
+        minusRowCount();
+
+        if (e.event.owner.name === "Arnaud") e.event.owner.avatar = picArnaud;
+        else e.event.owner.avatar = picAlban;
+
+        res.push({ row: row, evt: e.event, style: style, cname: "end" });
+      }
     }
 
-    // TODO
-    // Gérer date === endDate et startDate < date > endDate
-    // Améliorer la structure
-
+    return res;
   };
 
   return (
@@ -151,11 +189,6 @@ const Calendar = ({ givenDate }) => {
                   className={
                     "calendar-day " +
                     `${
-                      utils.isBetweenDates(day.date, dataEvents)
-                        ? "colorize "
-                        : ""
-                    }` +
-                    `${
                       day.isCurrentMonth
                         ? "calendar-day--current"
                         : "calendar-day--not-current"
@@ -168,34 +201,50 @@ const Calendar = ({ givenDate }) => {
                     </span>
                   </div>
                   {(() => {
-                    if (utils.isBetweenDates(day.date, dataEvents)) {
-                      const { evt, photo, style } = checkIfEvent(day.date);
-                      console.log("evt = " + evt);
-                      if (evt !== false) {
-                        return (
-                          <>
-                            <div className="event-day-wrapper">
-                              <div style={style} className="event-day start">
-                                <img
-                                  className="user-photo-event"
-                                  src={photo}
-                                  alt="user"
-                                />
-                                <span>{evt}</span>
-                              </div>
-                              <div className="event-day start" style={style}>
-                                <img
-                                  className="user-photo-event"
-                                  src={photo}
-                                  alt="user"
-                                />
-                                <span>{evt}</span>
-                              </div>
-                            </div>
-                          </>
-                        );
-                      }
-                      return <div></div>;
+                    const eventInfo = utils.isBetweenDates(
+                      day.date,
+                      dataEvents
+                    );
+                    if (eventInfo) {
+                      const res = getEventStyle(eventInfo);
+                      return (
+                        <>
+                          <div className="event-day-wrapper">
+                            {res.map((e) => {
+                              console.log(
+                                "id = " +
+                                  JSON.stringify(e.evt.id) +
+                                  " row = " +
+                                  JSON.stringify(e.row)
+                              );
+                              if (e.cname === "start") {
+                                return (
+                                  <div
+                                    style={e.style}
+                                    className={`event-day ${e.cname}`}
+                                  >
+                                    <img
+                                      className="user-photo-event"
+                                      src={e.evt.owner.avatar}
+                                      alt="user"
+                                    />
+                                    <span>{e.evt.title}</span>
+                                  </div>
+                                );
+                              } else {
+                                return (
+                                  <div
+                                    style={e.style}
+                                    className={`event-day ${e.cname}`}
+                                  >
+                                    <span></span>
+                                  </div>
+                                );
+                              }
+                            })}
+                          </div>
+                        </>
+                      );
                     } else {
                       return <span></span>;
                     }
