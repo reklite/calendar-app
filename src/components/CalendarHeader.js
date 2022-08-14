@@ -3,12 +3,10 @@ import React from "react";
 
 const CalendarHeader = (props) => {
 
-  // added photos locally because of 403 forbidden error on links
+  // added photos locally because of 403 forbidden error on urls
   let pic1 = require("../data/photos/arnaud.jpeg");
   let pic2 = require("../data/photos/alban.jpeg");
   const usersPhotos = [pic1, pic2];
-
-  if (props.users !== null) console.log(props.users[0].avatar);
 
   const getStyle = (color) => {
     const style = {
