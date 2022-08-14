@@ -8,6 +8,9 @@ import CalendarHeader from "./CalendarHeader";
 
 const WEEKDAYS = ["Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam.", "Dim."];
 
+let pic1 = require("../data/photos/arnaud.jpeg");
+let pic2 = require("../data/photos/alban.jpeg");
+
 const Calendar = ({ givenDate }) => {
   const [date, setDate] = useState(givenDate);
   const [monthYear, setMonthYear] = useState({
@@ -79,17 +82,59 @@ const Calendar = ({ givenDate }) => {
       e.endDate = dayjs(e.endDate).format("YYYY-MM-DD");
 
       // push user in array if no exist
-      if ((arrUsers.findIndex((x) => x.color === e.owner.color)) === -1)
+      if (arrUsers.findIndex((x) => x.color === e.owner.color) === -1)
         arrUsers.push(e.owner);
     });
 
     return { events: events, arrUsers: arrUsers };
   };
 
+  const checkIfEvent = (date) => {
+    let eventObj;
+    let res;
+    // console.log("ici : " + JSON.stringify(dataEvents));
+
+    let found = dataEvents.find((obj) => {
+      if (obj.startDate === date) {
+        eventObj = obj;
+        res = "start";
+        console.log(
+          `eventstart = ${JSON.stringify(obj.startDate)} = ${JSON.stringify(
+            date
+          )} = date`
+        );
+        console.log("obj = " + JSON.stringify(eventObj));
+      }
+      return obj.startDate === date;
+    });
+
+    if (found) {
+      const photo = (eventObj.owner.photo =
+        eventObj.owner.name === "Arnaud" ? pic1 : pic2);
+      const eventName = eventObj.title;
+      const style = {
+        backgroundColor: eventObj.owner.color,
+      };
+      return { evt: eventName, photo: photo, style: style };
+    } else {
+      return { evt: false, photo: false, style: false };
+    }
+
+    // TODO
+    // Gérer date === endDate et startDate < date > endDate
+    // Améliorer la structure
+
+  };
+
   return (
     <>
       <div className="calendar-month">
-        <CalendarHeader users={users} {...monthYear} date={date} changeDate={changeDate} />
+        <CalendarHeader
+          users={users}
+          {...monthYear}
+          date={date}
+          changeDate={changeDate}
+        />
 
         <ol className="day-of-week">
           {WEEKDAYS.map((day) => (
@@ -117,7 +162,44 @@ const Calendar = ({ givenDate }) => {
                     }`
                   }
                 >
-                  <span>{day.dayOfMonth}</span>
+                  <div className="calendar-day-wrapper">
+                    <span className="calendar-day-number">
+                      {day.dayOfMonth}
+                    </span>
+                  </div>
+                  {(() => {
+                    if (utils.isBetweenDates(day.date, dataEvents)) {
+                      const { evt, photo, style } = checkIfEvent(day.date);
+                      console.log("evt = " + evt);
+                      if (evt !== false) {
+                        return (
+                          <>
+                            <div className="event-day-wrapper">
+                              <div style={style} className="event-day start">
+                                <img
+                                  className="user-photo-event"
+                                  src={photo}
+                                  alt="user"
+                                />
+                                <span>{evt}</span>
+                              </div>
+                              <div className="event-day start" style={style}>
+                                <img
+                                  className="user-photo-event"
+                                  src={photo}
+                                  alt="user"
+                                />
+                                <span>{evt}</span>
+                              </div>
+                            </div>
+                          </>
+                        );
+                      }
+                      return <div></div>;
+                    } else {
+                      return <span></span>;
+                    }
+                  })()}
                 </li>
               </>
             ))}
