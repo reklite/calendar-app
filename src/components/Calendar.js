@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import * as utils from "../utils/utils";
 import localeFr from "dayjs/locale/fr";
-import data from "../data/exercice-calendar.json";
+import data from "../data/files/exercice-calendar.json";
 import CalendarHeader from "./CalendarHeader";
 
 const WEEKDAYS = ["Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam.", "Dim."];
@@ -72,33 +72,32 @@ const Calendar = ({ givenDate }) => {
   };
 
   const formatEventsUsers = (data) => {
-    const users = [];
+    const arrUsers = [];
     const events = data;
     events.forEach((e) => {
       e.startDate = dayjs(e.startDate).format("YYYY-MM-DD");
       e.endDate = dayjs(e.endDate).format("YYYY-MM-DD");
 
       // push user in array if no exist
-      if (users.findIndex((x) => x.color === e.owner.color))
-        users.push(e.owner);
+      if ((arrUsers.findIndex((x) => x.color === e.owner.color)) === -1)
+        arrUsers.push(e.owner);
     });
 
-    return { events: events, arrUsers: users };
+    return { events: events, arrUsers: arrUsers };
   };
 
   return (
     <>
-      <h1>Calendrier</h1>
       <div className="calendar-month">
-        <CalendarHeader {...monthYear} date={date} changeDate={changeDate} />
+        <CalendarHeader users={users} {...monthYear} date={date} changeDate={changeDate} />
 
-        <ol id="days-of-week" className="day-of-week">
+        <ol className="day-of-week">
           {WEEKDAYS.map((day) => (
             <li key={day}>{day}</li>
           ))}
         </ol>
 
-        <ol id="calendar-days" className="days-grid">
+        <ol className="days-grid">
           {calendar &&
             calendar.map((day) => (
               <>
