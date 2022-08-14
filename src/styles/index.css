@@ -139,6 +139,7 @@ li {
   position: relative;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
+  overflow: hidden;
 }
 
 .calendar-day {
@@ -148,11 +149,6 @@ li {
   color: var(--grey-800);
   border-right: solid 1px var(--grey-200);
   border-bottom: solid 1px var(--grey-200);
-}
-
-/* hide text on right side of calendar */
-.calendar-day:nth-child(7n + 7) { 
-  /* overflow: hidden; */
 }
 
 .calendar-day:nth-child(7n + 1) {
@@ -234,14 +230,13 @@ li {
 
 .start {
   width: 96%;
-  /* z-index: 100; */
   border-radius: 5px 0 0 5px;
   margin-left: 5%;
-  /* transform: translateX(10px); */
 }
 
 .active {
-  width: 100%;
+  width: 101%;
+
 }
 
 .end {
