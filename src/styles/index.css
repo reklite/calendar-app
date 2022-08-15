@@ -91,7 +91,6 @@ li {
   display: flex;
   align-items: center;
   margin-right: 20px;
-  /* margin-left: 20px; */
   font-size: 16px;
   z-index: 1;
 }
@@ -198,7 +197,6 @@ li {
 }
 
 .event-day {
-  order: -1;
   position: relative;
   display: flex;
   align-items: center;
