@@ -75,5 +75,16 @@
     },
     "startDate": "2022-02-20T06:00:00Z",
     "endDate": "2022-02-25T16:00:00Z"
+  },
+  {
+    "id": "8",
+    "title": "Titre de l'évènement 8",
+    "owner": {
+      "name": "Arnaud2",
+      "avatar": "https://image.noelshack.com/fichiers/2015/19/1431127209-barthap.png",
+      "color": "#b0eef7"
+    },
+    "startDate": "2022-02-23T06:00:00Z",
+    "endDate": "2022-02-26T16:00:00Z"
   }
 ]
