@@ -22,10 +22,7 @@ const Calendar = ({ givenDate }) => {
 
   const [users, setUsers] = useState(null);
 
-  let rowCount = 1;
   let idRow = [];
-
-  // const [rowCount, setRowCount] = useState(1);
 
   useEffect(() => {
     setCalendar(calculateCalendar(date.format("M"), date.format("YYYY")));
@@ -52,21 +49,29 @@ const Calendar = ({ givenDate }) => {
   };
 
   const removeIdRow = (id) => {
-    let filtered = idRow;
-    filtered.filter((e) => e.id !== id);
-    idRow = filtered;
-  };
-
-  const addRowCount = () => {
-    rowCount++;
-  };
-
-  const minusRowCount = () => {
-    if (rowCount > 1) rowCount--;
+    idRow = idRow.filter((e) => e.id !== id);
   };
 
   const getIdRow = (id) => {
     return idRow.find((e) => e.id === id);
+  };
+
+  const manageRowCount = () => {
+    if (idRow.length === 0) return 1;
+
+    let rows = [];
+    for (let k of idRow) {
+      rows.push(k.row);
+    }
+
+    let min = -1;
+    let i = 1;
+    while (min === -1 && i < 10) {
+      if (rows.indexOf(i) === -1) min = i;
+      i++;
+    }
+
+    return min;
   };
 
   const calculateCalendar = (m, y) => {
@@ -115,51 +120,88 @@ const Calendar = ({ givenDate }) => {
     return { events: events, arrUsers: arrUsers };
   };
 
+  const getBlankDivs = (r) => {
+    let blankDiv = [];
+    r--;
+    if (r === 0) return false;
+    for (let i = 0; i < r; i++)
+      blankDiv.push(<div className={`event-day`}></div>);
+    return blankDiv;
+  };
+
+  const getRowSpaces = (evt) => {
+    if (evt.length === 1) {
+      evt[0].blankDivs = getBlankDivs(evt[0].row);
+    } else {
+      let rows = evt.map((a) => a.row);
+      rows.unshift(0);
+      for (let i = rows.length - 1; i > 0; i--) {
+        let x = (rows[i] - rows[i - 1]);
+        evt[i - 1].blankDivs = x-1 > 0 ? getBlankDivs(x) : false;
+      }
+    }
+    return evt;
+  };
+
   const getEventStyle = (evt) => {
     let res = [];
 
     for (const e of evt) {
-      const style = {
+      const bgColor = {
         backgroundColor: e.event.owner.color,
       };
+
+      if (e.event.owner.name === "Arnaud") e.event.owner.avatar = picArnaud;
+      else e.event.owner.avatar = picAlban;
+
       if (e.info === "start") {
-        let row = rowCount;
-        let obj = { id: e.event.id, row: rowCount };
-        pushIdRow(obj);
-        addRowCount();
+        let row = manageRowCount();
+        pushIdRow({ id: e.event.id, row: row });
 
-        if (e.event.owner.name === "Arnaud") e.event.owner.avatar = picArnaud;
-        else e.event.owner.avatar = picAlban;
-
-        res.push({ row: row, evt: e.event, style: style, cname: "start" });
+        res.push({
+          row: row,
+          evt: e.event,
+          bgColor: bgColor,
+          cname: "start",
+          blankDivs: null,
+        });
       } else if (e.info === "active") {
         let obj = getIdRow(e.event.id);
         let row;
         if (obj === undefined) {
-          let obj = { id: e.event.id, row: rowCount };
+          let obj = { id: e.event.id, row: manageRowCount() };
           row = obj.row;
           pushIdRow(obj);
-          addRowCount();
         } else {
           row = obj.row;
         }
-
-        if (e.event.owner.name === "Arnaud") e.event.owner.avatar = picArnaud;
-        else e.event.owner.avatar = picAlban;
-
-        res.push({ row: row, evt: e.event, style: style, cname: "active" });
+        res.push({
+          row: row,
+          evt: e.event,
+          bgColor: bgColor,
+          cname: "active",
+          blankDivs: null,
+        });
       } else {
         let obj = getIdRow(e.event.id);
         let row = obj.row;
-        removeIdRow();
-        minusRowCount();
+        removeIdRow(e.event.id);
 
-        if (e.event.owner.name === "Arnaud") e.event.owner.avatar = picArnaud;
-        else e.event.owner.avatar = picAlban;
-
-        res.push({ row: row, evt: e.event, style: style, cname: "end" });
+        res.push({
+          row: row,
+          evt: e.event,
+          bgColor: bgColor,
+          cname: "end",
+          blankDivs: null,
+        });
       }
     }
+
+    if (res.length > 1) {
+      res.sort((a, b) => (a.row > b.row ? 1 : -1));
+    }
+
+    res = getRowSpaces(res);
 
     return res;
   };
@@ -210,43 +252,38 @@ const Calendar = ({ givenDate }) => {
                       return (
                         <>
                           <div className="event-day-wrapper">
-                            {res.map((e) => {
-                              console.log(
-                                "id = " +
-                                  JSON.stringify(e.evt.id) +
-                                  " row = " +
-                                  JSON.stringify(e.row)
-                              );
+                            {res.map((e, i) => {
+                              let photo = false,
+                                title = false;
                               if (e.cname === "start") {
-                                return (
-                                  <div
-                                    style={e.style}
-                                    className={`event-day ${e.cname}`}
-                                  >
-                                    <img
-                                      className="user-photo-event"
-                                      src={e.evt.owner.avatar}
-                                      alt="user"
-                                    />
-                                    <span>{e.evt.title}</span>
-                                  </div>
+                                photo = (
+                                  <img
+                                    className="user-photo-event"
+                                    src={e.evt.owner.avatar}
+                                    alt="user"
+                                  />
                                 );
-                              } else {
-                                return (
-                                  <div
-                                    style={e.style}
-                                    className={`event-day ${e.cname}`}
-                                  >
-                                    <span></span>
-                                  </div>
-                                );
+                                title = e.evt.title;
                               }
+
+                              return (
+                                <>
+                                  {e.blankDivs}
+                                  <div
+                                    style={e.bgColor}
+                                    className={`event-day ${e.cname}`}
+                                  >
+                                    {photo}
+                                    <span>{title}</span>
+                                  </div>
+                                </>
+                              );
                             })}
                           </div>
                         </>
                       );
                     } else {
-                      return <span></span>;
+                      return false;
                     }
                   })()}
                 </li>
