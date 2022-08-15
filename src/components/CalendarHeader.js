@@ -30,7 +30,8 @@ const CalendarHeader = (props) => {
             <>
             <div style={getStyle(user.color)}></div>
               <div className="user-block">
-                <img className="user-photo" src={usersPhotos[i]} alt={user.name} />
+                {/* <img className="user-photo" src={usersPhotos[i]} alt={user.name} /> */}
+                <img className="user-photo" src={user.avatar} alt={user.name} /> 
                 <span key={user.name}>
                   {user.name}
                 </span>
