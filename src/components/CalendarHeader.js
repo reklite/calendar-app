@@ -39,6 +39,7 @@ const CalendarHeader = (props) => {
             </>
           ))}
       </div>
+      <div className="current-month-year">
       <span
         onClick={() => props.changeDate(props.date, "left")}
         className="calendar-month-header-selectors"
@@ -56,6 +57,7 @@ const CalendarHeader = (props) => {
       >
         {">"}
       </span>
+      </div>
     </section>
   );
 };
